@@ -9,9 +9,11 @@ from nilearn._utils import check_niimg
 def _get_64(niimg):
     f = check_niimg(niimg)
     data = f.get_data().astype(float)
-    data = data + data.min()
+    null_indices = data == 0
+    data = data - data.min()
     data = data / data.max() * 254.
     data = data.astype(np.uint8)
+    data[null_indices] = 0
     f = nibabel.Nifti1Image(data, f.get_affine())
     _, filename = tempfile.mkstemp(suffix='.nii.gz')
     f.to_filename(filename)
