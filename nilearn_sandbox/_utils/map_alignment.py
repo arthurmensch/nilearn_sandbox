@@ -7,7 +7,7 @@ from nilearn.input_data import MultiNiftiMasker
 from nilearn._utils import check_niimg_4d
 
 
-def _spatial_correlation_flat(these_components, those_components):
+def     _spatial_correlation_flat(these_components, those_components):
     """Compute the spatial covariance betwwen two 2D ndarray
 
     Parameters
@@ -25,14 +25,12 @@ def _spatial_correlation_flat(these_components, those_components):
     """
     this_S = np.sqrt(np.sum(these_components ** 2, axis=1))
     this_S[this_S == 0] = 1
-    these_components /= this_S[:, np.newaxis]
+    these_components = these_components / this_S[:, np.newaxis]
 
     that_S = np.sqrt(np.sum(those_components ** 2, axis=1))
     that_S[that_S == 0] = 1
-    those_components /= that_S[:, np.newaxis]
-    corr = these_components.dot(those_components.T)
-    these_components *= this_S[:, np.newaxis]
-    those_components *= that_S[:, np.newaxis]
+    those_components = those_components / that_S[:, np.newaxis]
+    corr = np.abs(these_components.dot(those_components.T))
     return corr
 
 
