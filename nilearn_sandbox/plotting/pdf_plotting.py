@@ -24,6 +24,7 @@ def plot_to_pdf(img, path='output.pdf', vmax=None):
     """
     a4_size = (8.27, 11.69)
     img = check_niimg_4d(img)
+    img.get_data()
     n_components = img.shape[3]
 
     if vmax == 'auto':

@@ -7,7 +7,7 @@ from nilearn.input_data import MultiNiftiMasker
 from nilearn._utils import check_niimg_4d
 
 
-def _spatial_correlation_flat(these_components, those_components):
+def     _spatial_correlation_flat(these_components, those_components):
     """Compute the spatial covariance betwwen two 2D ndarray
 
     Parameters
@@ -25,14 +25,12 @@ def _spatial_correlation_flat(these_components, those_components):
     """
     this_S = np.sqrt(np.sum(these_components ** 2, axis=1))
     this_S[this_S == 0] = 1
-    these_components /= this_S[:, np.newaxis]
+    these_components = these_components / this_S[:, np.newaxis]
 
     that_S = np.sqrt(np.sum(those_components ** 2, axis=1))
     that_S[that_S == 0] = 1
-    those_components /= that_S[:, np.newaxis]
-    corr = these_components.dot(those_components.T)
-    these_components *= this_S[:, np.newaxis]
-    those_components *= that_S[:, np.newaxis]
+    those_components = those_components / that_S[:, np.newaxis]
+    corr = np.abs(these_components.dot(those_components.T))
     return corr
 
 
@@ -137,59 +135,3 @@ def align_list_with_last_nii(masker, imgs):
     new_imgs = align_many_to_one_nii(masker, imgs[-1], imgs[:-1])
     new_imgs.append(check_niimg_4d(imgs[-1]))
     return new_imgs
-
-
-def test_align_many_to_one_nii():
-    affine = np.eye(4)
-    rng = np.random.RandomState(0)
-    a = rng.randn(10, 5 * 5 * 5)
-    b = rng.permutation(a)
-    c = rng.permutation(a)
-    masker = MultiNiftiMasker(mask_img=nibabel.Nifti1Image(np.ones((5, 5, 5)),
-                                                           affine=affine))
-    masker.fit()
-    img_a = masker.inverse_transform(a)
-    img_b = masker.inverse_transform(b)
-    img_c = masker.inverse_transform(c)
-    new_img_b = align_many_to_one_nii(masker, img_a, img_b)
-    new_b = masker.transform(new_img_b)
-    assert_array_almost_equal(a, new_b)
-    results = align_list_with_last_nii(masker, (img_b, img_c, img_a))
-    new_b = masker.transform(results[0])
-    new_c = masker.transform(results[1])
-    assert_array_almost_equal(a, new_b)
-    assert_array_almost_equal(a, new_c)
-
-
-def test_align_one_to_one_flat():
-    rng = np.random.RandomState(0)
-    a = rng.rand(10, 100)
-    a_copy = a.copy()
-    b = rng.permutation(a)
-    b_copy = b.copy()
-    c = _align_one_to_one_flat(a, b, inplace=False)
-    assert_array_almost_equal(a, c)
-    assert_array_almost_equal(a, a_copy)
-    assert_array_almost_equal(b, b_copy)
-    _align_one_to_one_flat(a, b, inplace=True)
-    assert_array_almost_equal(a, b)
-    assert_array_almost_equal(a, a_copy)
-    assert_raises(AssertionError, assert_array_almost_equal, b, b_copy)
-
-
-def test_align_flat():
-    rng = np.random.RandomState(0)
-    ref = rng.rand(10, 100)
-    b = rng.permutation(ref)
-    c = rng.permutation(ref)
-    target_list = [b, c]
-    target_list_copy = [b.copy(), c.copy()]
-    aligned_target_list = _align_many_to_one_flat(ref, target_list,
-                                                  inplace=False)
-    for target, target_copy in zip(target_list, target_list_copy):
-        assert_array_almost_equal(target, target_copy)
-    for target in aligned_target_list:
-        assert_array_almost_equal(ref, target)
-
-
-# TODO test spatial correlation
