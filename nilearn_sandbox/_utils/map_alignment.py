@@ -1,3 +1,4 @@
+from joblib import Memory
 import nibabel
 import numpy as np
 from numpy.testing import assert_array_almost_equal, \
@@ -52,10 +53,11 @@ def _align_many_to_one_flat(reference, target_list, inplace=False):
     return res
 
 
-def _align_one_to_one_flat(base_components, target_components, inplace=False):
+def _align_one_to_one_flat(base_components, target_components, inplace=False,
+                           mem=Memory(cachedir=None)):
     """Align target_components with base_components using linear_assignment"""
-    indices = linear_assignment(-_spatial_correlation_flat(base_components,
-                                                         target_components))
+    indices = mem.cache(linear_assignment(-_spatial_correlation_flat(base_components,
+                                                         target_components)))
 
     if inplace:
         target_components[indices[:, 0]] = target_components[indices[:, 1]]
