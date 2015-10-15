@@ -8,7 +8,7 @@ from nilearn.input_data import MultiNiftiMasker
 from nilearn._utils import check_niimg_4d
 
 
-def     _spatial_correlation_flat(these_components, those_components):
+def _spatial_correlation_flat(these_components, those_components):
     """Compute the spatial covariance betwwen two 2D ndarray
 
     Parameters
@@ -44,10 +44,10 @@ def _align_many_to_one_flat(reference, target_list, inplace=False):
     for i, target_components in enumerate(target_list):
         if inplace:
             _align_one_to_one_flat(reference, target_components,
-                                  inplace=True)
+                                   inplace=True)
         else:
             res.append(_align_one_to_one_flat(reference, target_components,
-                                             inplace=False))
+                                              inplace=False))
     if inplace:
         res = target_list
     return res
@@ -56,8 +56,9 @@ def _align_many_to_one_flat(reference, target_list, inplace=False):
 def _align_one_to_one_flat(base_components, target_components, inplace=False,
                            mem=Memory(cachedir=None)):
     """Align target_components with base_components using linear_assignment"""
-    indices = mem.cache(linear_assignment(-_spatial_correlation_flat(base_components,
-                                                         target_components)))
+    indices = mem.cache(
+        linear_assignment(-_spatial_correlation_flat(base_components,
+                                                     target_components)))
 
     if inplace:
         target_components[indices[:, 0]] = target_components[indices[:, 1]]
