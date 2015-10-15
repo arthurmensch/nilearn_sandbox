@@ -57,8 +57,8 @@ def _align_one_to_one_flat(base_components, target_components, inplace=False,
                            mem=Memory(cachedir=None)):
     """Align target_components with base_components using linear_assignment"""
     indices = mem.cache(
-        linear_assignment(-_spatial_correlation_flat(base_components,
-                                                     target_components)))
+        linear_assignment)(-_spatial_correlation_flat(base_components,
+                                                     target_components))
 
     if inplace:
         target_components[indices[:, 0]] = target_components[indices[:, 1]]
