@@ -10,8 +10,7 @@ import pandas as pd
 from sklearn.datasets.base import Bunch
 
 
-def \
-        _set_base_dir():
+def _set_base_dir():
     """ base_dir
     """
     base_dir = ''
