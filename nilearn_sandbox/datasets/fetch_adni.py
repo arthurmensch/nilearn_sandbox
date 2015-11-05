@@ -98,9 +98,9 @@ def fetch_adni_longitudinal_rs_fmri(dirname='ADNI_longitudinal_rs_fmri',
                                          base_dir=dirname, prefix='I[0-9]*')
     images = np.array(images)
     # get func files
-    func_files = map(lambda x: _glob_subject_img(x, suffix='func/' + prefix,
+    func_files = list(map(lambda x: _glob_subject_img(x, suffix='func/' + prefix,
                                                  first_img=True),
-                     subject_paths)
+                     subject_paths))
     func_files = np.array(func_files)
 
     # get phenotype from csv
