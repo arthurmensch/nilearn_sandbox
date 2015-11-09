@@ -1,4 +1,7 @@
-from nilearn.datasets.utils import _get_dataset_dir
+from nilearn.datasets.utils import _get_dataset_dir, _get_dataset_descr
+import numpy as np
+import os
+from sklearn.datasets.base import Bunch
 
 
 def fetch_hcp_rest(data_dir, n_subjects=10):
