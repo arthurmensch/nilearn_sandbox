@@ -23,9 +23,11 @@ def fetch_hcp_rest(data_dir, n_subjects=40):
             if name in ('rfMRI_REST1_RL', 'rfMRI_REST1_LR',
                         'rfMRI_REST2_RL',
                         'rfMRI_REST2_LR'):
-                func.append(join(dirpath, filename, filename + '.nii.gz'))
+                filename = join(dirpath, filename, filename + '.nii.gz')
+                func.append(filename)
                 kwargs = {'record': name, 'subject_id': subject_id,
-                          'serie_id': serie_id}
+                          'serie_id': serie_id,
+                          'filename': filename}
                 meta.append(kwargs)
     results = {'func': func, 'meta': meta,
                'description': "'Human connectome project"}
