@@ -3,6 +3,8 @@ import matplotlib
 # matplotlib.use('PDF')
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+from nibabel import Nifti1Image
+
 from nilearn.plotting import plot_stat_map, plot_prob_atlas
 from nilearn._utils import check_niimg_4d
 from nilearn.image import index_img
@@ -24,8 +26,12 @@ def plot_to_pdf(img, path='output.pdf', vmax=None):
     """
     a4_size = (8.27, 11.69)
     img = check_niimg_4d(img)
-    img.get_data()
+    data = img.get_data()
     n_components = img.shape[3]
+    for j in range(n_components):
+        if np.sum(data[..., j] < 0):
+            data[..., j] *= -1
+    img = Nifti1Image(data, img.get_affine())
 
     if vmax == 'auto':
         vmax = np.max(np.abs(img.get_data()), axis=3)
@@ -46,3 +52,6 @@ def plot_to_pdf(img, path='output.pdf', vmax=None):
                     ax.axis('off')
             pdf.savefig(fig)
             plt.close()
+
+if __name__ == '__main__':
+    plot_to_pdf('/home/arthur/drago/output/fast_spca/2016-01-26_15-31-43/experiment_23/a_175124.nii.gz', path='output.pdf', vmax=None)
